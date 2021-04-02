@@ -48,6 +48,7 @@ apt-get install -y mariadb-server mariadb-client
 #instalace PHPMyAdmin
 #nastroj ktery je vlastne webova stranka v Apache a cez ktery se da jednoduse spravovat databaze MariaDB
 #tento nastroj uz neni ve verzi 10 - Buster, verze 9 - Stretch to jeste ma 
+#da se doinstalovat i na verzi 10 ale jen manualne...
 VERZE=$( grep VERSION_CODENAME /etc/os-release | cut -d '=' -f2 )
 if [ "$VERZE" == "stretch" ]
 	then	
