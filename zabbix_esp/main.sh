@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")"
 
-echo $(date) - $@ > $(basename "$0").log
+echo $(date) - $@ >> $(basename "$0").log
 
 if [ -a "../../tera_esp/" ]
 	then
@@ -39,13 +39,13 @@ else
 
 if [ "$6" != "" ]
         then
-        HLASKA="$6"
+        HLASKA=$6" "$7
 else
         echo CHYBA - Chyba hlaska 
         exit 4 
         fi
 
-POM=$(cat hlasky.csv | grep $HLASKA )
+POM=$(cat hlasky.csv | grep "$HLASKA" )
 if ! [ -z "$POM" ] 
 	then
 	echo INFO - Hlaska sa v zozname nenasla
@@ -53,18 +53,21 @@ if ! [ -z "$POM" ]
 	fi
 
 echo OK - Hlaska sa v zozname nasla
-SPINAC=$(cat hlasky.csv | grep "$HLASKA" | cut -d';' -f2)
-AKCIA=$(cat hlasky.csv | grep "$HLASKA" | cut -d';' -f3)
-if [ "$TYP" == "P" ]
-	then
-	../../switch.sh $MODUL $SPINAC $AKCIA 
-else
-	if [ "$AKCIA" == "ZAP" ]
-		then
-		AKCIA="VYP"
-	else
-		AKCIA="ZAP"
-		fi
 
-	../../switch.sh $MODUL $SPINAC $AKCIA
-	fi
+#SPINAC=$(cat hlasky.csv | grep "$HLASKA" | cut -d';' -f2)
+for SPINAC in $( cat hlasky.csv | grep "$HLASKA" | cut -d';' -f2 )
+	do
+	AKCIA=$(cat hlasky.csv | grep "$HLASKA" | grep $SPINAC | cut -d';' -f3)
+	if [ "$TYP" == "P" ]
+		then
+		../../tera_esp/switch.sh $MODUL $SPINAC $AKCIA 
+	else
+		if [ "$AKCIA" == "ZAP" ]
+			then
+			AKCIA="VYP"
+		else
+			AKCIA="ZAP"
+			fi
+		../../tera_esp/switch.sh $MODUL $SPINAC $AKCIA
+		fi
+	done
